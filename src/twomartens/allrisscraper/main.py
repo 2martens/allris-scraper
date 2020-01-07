@@ -42,7 +42,7 @@ def main() -> None:
     pdf_location = config["Default"]["pdflocation"]
     
     options = Options()
-    options.headless = False
+    options.headless = True
     options.add_argument(f"user-agent={user_agent}")
     driver = webdriver.WebDriver(options=options)
     driver.implicitly_wait(2)
@@ -52,6 +52,7 @@ def main() -> None:
     driver.get("https://sitzungsdienst-eimsbuettel.hamburg.de/ri/si012.asp")
     meetings = get_meetings(driver)
     download_documents(driver, meetings, pdf_location)
+    driver.close()
     
 
 def login(driver: webdriver.WebDriver, username: str, password: str) -> None:
