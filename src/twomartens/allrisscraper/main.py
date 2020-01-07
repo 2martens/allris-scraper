@@ -32,11 +32,34 @@ from twomartens.allrisscraper import meeting
 ALLRIS_LOGIN: str = "https://2martens.de/allris-eimsbüttel"
 ALLRIS_OPEN: str = "https://2martens.de/bezirk-eimsbüttel"
 user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3112.50 Safari/537.36'
+_CONFIG_PROPS = {
+    "Default": {
+        "username": "",
+        "password": "",
+        "pdflocation": ""
+    }
+}
 
 
 def main() -> None:
+    config_file = f"{os.getcwd()}/tm-allris-scraper-config.ini"
+    try:
+        with open(config_file, "r"):
+            # if we reach this branch then the file exists and everything is fine
+            return
+    except FileNotFoundError:
+        with open(config_file, "w") as file:
+            parser = configparser.ConfigParser()
+            for section in _CONFIG_PROPS:
+                parser[section] = {}
+                for option in _CONFIG_PROPS[section]:
+                    default = _CONFIG_PROPS[section][option]
+                    parser[section][option] = default
+
+            parser.write(file)
+            
     config = configparser.ConfigParser()
-    config.read("config.ini")
+    config.read(config_file)
     username = config["Default"]["username"]
     password = config["Default"]["password"]
     pdf_location = config["Default"]["pdflocation"]
