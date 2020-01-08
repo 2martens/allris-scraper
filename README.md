@@ -1,5 +1,9 @@
 # ALLRIS Scraper
 
+![Apache Licence 2.0](https://img.shields.io/pypi/l/twomartens.allrisscraper)
+![Supports Python 3.7 and 3.8](https://img.shields.io/pypi/pyversions/twomartens.allrisscraper)
+![version 0.1.1](https://img.shields.io/pypi/v/twomartens.allrisscraper)
+
 This scraper requires your username and password and performs the following tasks for you:
 
 - login
