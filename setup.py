@@ -41,6 +41,7 @@ setup(
     python_requires="~=3.7",
     install_requires=["selenium"],
     license="Apache License 2.0",
+    include_package_data=True,
     classifiers=[
         "Operating System :: OS Independent",
         "Development Status :: 3 - Alpha",
