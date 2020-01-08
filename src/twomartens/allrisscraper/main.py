@@ -115,11 +115,11 @@ def download_documents(driver: webdriver.WebDriver, meetings: List[meeting.Meeti
         invitation_item = form_elements[2]
         invitation_link = f"{base_link}?DOLFDNR={invitation_item.find_element_by_name('DOLFDNR').get_property('value')}&options=64"
         driver.get(agenda_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name}/Tagesordnung.pdf")
+        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name.replace(' ', '-')}/Tagesordnung.pdf")
         driver.get(total_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name}/Mappe.pdf")
+        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name.replace(' ', '-')}/Mappe.pdf")
         driver.get(invitation_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name}/Einladung.pdf")
+        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name.replace(' ', '-')}/Einladung.pdf")
 
 
 def save_pdf(url: str, dest: str) -> None:
