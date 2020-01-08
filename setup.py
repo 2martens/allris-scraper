@@ -43,9 +43,10 @@ setup(
     license="Apache License 2.0",
     classifiers=[
         "Operating System :: OS Independent",
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: Apache Software License",
         "Environment :: Console",
+        "Topic :: Utilities",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
