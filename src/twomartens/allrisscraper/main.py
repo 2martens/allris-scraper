@@ -115,11 +115,11 @@ def download_documents(driver: webdriver.WebDriver, meetings: List[meeting.Meeti
         invitation_item = form_elements[2]
         invitation_link = f"{base_link}?DOLFDNR={invitation_item.find_element_by_name('DOLFDNR').get_property('value')}&options=64"
         driver.get(agenda_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name.replace(' ', '-')}/Tagesordnung.pdf")
+        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{get_abbreviated_committee_name(meeting.name)}/Tagesordnung.pdf")
         driver.get(total_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name.replace(' ', '-')}/Mappe.pdf")
+        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{get_abbreviated_committee_name(meeting.name)}/Mappe.pdf")
         driver.get(invitation_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{meeting.name.replace(' ', '-')}/Einladung.pdf")
+        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{get_abbreviated_committee_name(meeting.name)}/Einladung.pdf")
 
 
 def save_pdf(url: str, dest: str) -> None:
@@ -133,7 +133,42 @@ def save_pdf(url: str, dest: str) -> None:
 def get_day(date_str: str) -> date:
     date_elements = date_str[date_str.find(",") + 1:].split(".")
     return date(int(date_elements[-1]), int(date_elements[-2]), int(date_elements[-3]))
+
+
+def get_abbreviated_committee_name(name: str) -> str:
+    start_committee = "Sitzung des Ausschusses"
+    start_regional_committee = "Sitzung des Regionalausschusses"
+    start_plenary = "Sitzung der Bezirksversammlung"
+    abbreviated_name = ""
+    if start_plenary in name:
+        abbreviated_name = "BV"
+    elif start_committee in name:
+        second_part = name[len(start_committee):]
+        second_split = second_part.split(sep=",")
+        abbreviated_name = get_abbreviation(second_split)
+        if len(abbreviated_name) == 1:
+            abbreviated_name = f"A{abbreviated_name}"
+    elif start_regional_committee in name:
+        second_part = name[len(start_committee):]
+        second_split = second_part.split(sep=",")
+        abbreviated_name = f"Ra{get_abbreviation(second_split)}"
     
+    return abbreviated_name
+
+
+def get_abbreviation(name):
+    abbreviated_name = ""
+    for part in name:
+        part = part.lstrip()
+        if "und" in part:
+            part_split = part.split("und")
+            first_part = part_split[0].lstrip()
+            second_part = part_split[1].lstrip()
+            abbreviated_name = f"{abbreviated_name}{first_part[:1].capitalize()}{second_part[:1].capitalize()}"
+        else:
+            abbreviated_name = f"{abbreviated_name}{part[:1].capitalize()}"
+    return abbreviated_name
+
 
 if __name__ == "__main__":
     main()
