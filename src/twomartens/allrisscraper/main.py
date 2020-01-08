@@ -57,6 +57,7 @@ def main() -> None:
                     parser[section][option] = default
 
             parser.write(file)
+            return
             
     config = configparser.ConfigParser()
     config.read(config_file)
