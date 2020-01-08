@@ -46,7 +46,7 @@ def main() -> None:
     try:
         with open(config_file, "r"):
             # if we reach this branch then the file exists and everything is fine
-            return
+            pass
     except FileNotFoundError:
         with open(config_file, "w") as file:
             parser = configparser.ConfigParser()
