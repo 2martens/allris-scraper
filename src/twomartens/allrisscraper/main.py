@@ -27,6 +27,7 @@ from selenium.webdriver.firefox import webdriver
 from selenium.webdriver.firefox.options import Options
 
 from twomartens.allrisscraper import meeting
+from twomartens.allrisscraper import definitions
 
 
 ALLRIS_LOGIN: str = "https://2martens.de/allris-eimsbüttel"
@@ -140,6 +141,7 @@ def get_abbreviated_committee_name(name: str) -> str:
     start_committee = "Sitzung des Ausschusses"
     start_regional_committee = "Sitzung des Regionalausschusses"
     start_plenary = "Sitzung der Bezirksversammlung"
+    start_youth_help_committee = "Sitzung des Jugendhilfeausschusses"
     abbreviated_name = ""
     if start_plenary in name:
         abbreviated_name = "BV"
@@ -153,6 +155,11 @@ def get_abbreviated_committee_name(name: str) -> str:
         second_part = name[len(start_regional_committee):]
         second_split = second_part.split(sep="/")
         abbreviated_name = f"Ra{get_abbreviation(second_split)}"
+    elif start_youth_help_committee in name:
+        abbreviated_name = "JHA"
+    
+    if abbreviated_name in definitions.ABBREVIATIONS["Eimsbüttel"]:
+        abbreviated_name = definitions.ABBREVIATIONS["Eimsbüttel"][abbreviated_name]
     
     return abbreviated_name
 
