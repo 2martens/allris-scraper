@@ -16,11 +16,43 @@
 
 
 ABBREVIATIONS = {
+    "Altona": {
+        "Haupt": "HA",
+    },
+    "Bergedorf": {
+        "Haupt": "HA",
+    },
     "Eimsbüttel": {
-        "RaLNS":  "RaLoNiS",
-        "HKS":    "HaKuSp",
-        "GNUVWD": "GNUVWDi",
-        "AS": "StaPla",
-        "AU": "Uni"
+        "Haupt":      "HA",
+        "Kerngebiet": "KGA",
+        "RaLNS":      "RaLoNiS",
+        "HKS":        "HaKuS",
+        "GNUVWD":     "GNUVWDi",
+        "SAIBGGSG":   "SR",
+        "AS":         "StaPla",
+        "AU":         "Uni"
+    },
+    "Hamburg-Mitte": {
+        "Haupt": "HA",
+        "Stadtplanungs": "StaPla"
+    },
+    "Hamburg-Nord": {
+        "Haupt": "HA",
+    },
+    "Harburg": {
+        "Haupt": "HA",
+    },
+    "Wandsbek": {
+        "Haupt": "HA",
     }
+}
+
+BASE_LINKS = {
+    "Altona": "https://sitzungsdienst-altona.hamburg.de/ri",
+    "Bergedorf": "https://sitzungsdienst-bergedorf.hamburg.de/ri",
+    "Eimsbüttel": "https://sitzungsdienst-eimsbuettel.hamburg.de/ri",
+    "Hamburg-Mitte": "https://sitzungsdienst-hamburg-mitte.hamburg.de/ri",
+    "Hamburg-Nord": "https://sitzungsdienst-hamburg-nord.hamburg.de/ri",
+    "Harburg": "https://sitzungsdienst-harburg.hamburg.de/ri",
+    "Wandsbek": "https://sitzungsdienst-wandsbek.hamburg.de/ri",
 }

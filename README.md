@@ -2,7 +2,7 @@
 
 ![Apache Licence 2.0](https://img.shields.io/pypi/l/twomartens.allrisscraper)
 ![Supports Python 3.7 and 3.8](https://img.shields.io/pypi/pyversions/twomartens.allrisscraper)
-![version 0.2.2](https://img.shields.io/pypi/v/twomartens.allrisscraper)
+![version 0.3.0](https://img.shields.io/pypi/v/twomartens.allrisscraper)
 
 This scraper requires your username and password and performs the following tasks for you:
 
@@ -10,7 +10,8 @@ This scraper requires your username and password and performs the following task
 - download of all agendas and motions related to upcoming meetings of committees and plenary sessions
   - Only considers meetings where you already have been invited formally through ALLRIS.
 
-**IMPORTANT:** As of now only the Hamburg district of Eimsbüttel is supported.
+**IMPORTANT:** All districts are supported but official committe abbreviations will only work for
+               Eimsbüttel as of now.
 
 ## Requirements
 
@@ -24,6 +25,22 @@ This scraper requires your username and password and performs the following task
 1. Install ALLRIS scraper ``pip install twomartens.allrisscraper`` (you need Python 3.7+)
 2. Run ALLRIS scraper a first time ``tm-allrisscraper`` (creates config ini in your current working directory)
 3. Fill out the config file with your login credentials and an absolute path on your system to store PDFs of files
+
+## Configuration
+
+```ini
+[Default]
+; possible values for district: Altona, Bergedorf, Eimsbüttel, Hamburg-Nord, 
+; Hamburg-Mitte, Harburg, Wandsbek
+district = Eimsbüttel
+; if you are not from Eimsbüttel your domain ending will differ
+username = max.mustermann@eimsbuettel.de
+; password is stored in clear text, therefore ini file should have most 
+; restrictive read permissions
+password = VerySecurePassword
+; location for storage of PDFs (trailing slash is IMPORTANT)
+pdflocation = /path/to/storage/of/PDFs/
+```
 
 ## Usage after initial setup
 

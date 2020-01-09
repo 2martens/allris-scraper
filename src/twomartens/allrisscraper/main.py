@@ -35,9 +35,10 @@ ALLRIS_OPEN: str = "https://2martens.de/bezirk-eimsbüttel"
 user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3112.50 Safari/537.36'
 _CONFIG_PROPS = {
     "Default": {
-        "username": "",
-        "password": "",
-        "pdflocation": ""
+        "district": "Eimsbüttel",
+        "username": "max.mustermann@eimsbuettel.de",
+        "password": "SehrSicheresPasswort",
+        "pdflocation": "/Pfad/zum/Ablegen/der/PDFs/"
     }
 }
 
@@ -62,9 +63,11 @@ def main() -> None:
             
     config = configparser.ConfigParser()
     config.read(config_file)
+    district = config["Default"]["district"]
     username = config["Default"]["username"]
     password = config["Default"]["password"]
     pdf_location = config["Default"]["pdflocation"]
+    base_url = definitions.BASE_LINKS[district]
     
     options = Options()
     options.headless = True
@@ -74,9 +77,9 @@ def main() -> None:
     driver.get(ALLRIS_LOGIN)
     login(driver, username=username, password=password)
     driver.get("https://gateway.hamburg.de/HamburgGateway/Service/StartService/113")
-    driver.get("https://sitzungsdienst-eimsbuettel.hamburg.de/ri/si012.asp")
+    driver.get(f"{base_url}/ri/si012.asp")
     meetings = get_meetings(driver)
-    download_documents(driver, meetings, pdf_location)
+    download_documents(driver, meetings, pdf_location, base_url, district)
     driver.close()
     
 
@@ -105,10 +108,11 @@ def get_meetings(driver: webdriver.WebDriver) -> List[meeting.Meeting]:
     return meetings
     
 
-def download_documents(driver: webdriver.WebDriver, meetings: List[meeting.Meeting], pdf_location: str) -> None:
-    base_link = "https://sitzungsdienst-eimsbuettel.hamburg.de/ri/do027.asp"
-    for meeting in meetings:
-        driver.get(meeting.link)
+def download_documents(driver: webdriver.WebDriver, meetings: List[meeting.Meeting],
+                       pdf_location: str, base_url: str, district: str) -> None:
+    base_link = f"{base_url}/do027.asp"
+    for _meeting in meetings:
+        driver.get(_meeting.link)
         td = driver.find_element(By.XPATH, "//table[@class='tk1']//td[@class='me1']")
         form_elements = td.find_elements_by_tag_name("form")
         agenda_item = form_elements[0]
@@ -118,11 +122,15 @@ def download_documents(driver: webdriver.WebDriver, meetings: List[meeting.Meeti
         invitation_item = form_elements[2]
         invitation_link = f"{base_link}?DOLFDNR={invitation_item.find_element_by_name('DOLFDNR').get_property('value')}&options=64"
         driver.get(agenda_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{get_abbreviated_committee_name(meeting.name)}/Tagesordnung.pdf")
+        save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Tagesordnung.pdf")
         driver.get(total_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{get_abbreviated_committee_name(meeting.name)}/Mappe.pdf")
+        save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Mappe.pdf")
         driver.get(invitation_link)
-        save_pdf(driver.current_url, f"{pdf_location}{meeting.date.isoformat()}_{get_abbreviated_committee_name(meeting.name)}/Einladung.pdf")
+        save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Einladung.pdf")
+
+
+def get_formatted_filename(pdf_location: str, meeting_obj: meeting.Meeting, district: str) -> str:
+    return f"{pdf_location}{meeting_obj.date.isoformat()}_{get_abbreviated_committee_name(meeting_obj.name, district)}"
 
 
 def save_pdf(url: str, dest: str) -> None:
@@ -138,29 +146,34 @@ def get_day(date_str: str) -> date:
     return date(int(date_elements[-1]), int(date_elements[-2]), int(date_elements[-3]))
 
 
-def get_abbreviated_committee_name(name: str) -> str:
+def get_abbreviated_committee_name(name: str, district: str) -> str:
     start_committee = "Sitzung des Ausschusses"
     start_regional_committee = "Sitzung des Regionalausschusses"
     start_plenary = "Sitzung der Bezirksversammlung"
     start_youth_help_committee = "Sitzung des Jugendhilfeausschusses"
+    start_other_committee = "Sitzung des"
+    end_other_committee = "ausschusses"
     abbreviated_name = ""
-    if start_plenary in name:
+    if name.startswith(start_plenary):
         abbreviated_name = "BV"
-    elif start_committee in name:
+    elif name.startswith(start_committee):
         second_part = name[len(start_committee):]
         second_split = second_part.split(sep=",")
         abbreviated_name = get_abbreviation(second_split)
         if len(abbreviated_name) == 1:
             abbreviated_name = f"A{abbreviated_name}"
-    elif start_regional_committee in name:
+    elif name.startswith(start_regional_committee):
         second_part = name[len(start_regional_committee):]
         second_split = second_part.split(sep="/")
         abbreviated_name = f"Ra{get_abbreviation(second_split)}"
-    elif start_youth_help_committee in name:
+    elif name.startswith(start_youth_help_committee):
         abbreviated_name = "JHA"
+    elif name.startswith(start_other_committee) and name.endswith(end_other_committee):
+        core_name = name[len(start_other_committee):-len(end_other_committee)]
+        abbreviated_name = core_name
     
-    if abbreviated_name in definitions.ABBREVIATIONS["Eimsbüttel"]:
-        abbreviated_name = definitions.ABBREVIATIONS["Eimsbüttel"][abbreviated_name]
+    if abbreviated_name in definitions.ABBREVIATIONS[district]:
+        abbreviated_name = definitions.ABBREVIATIONS[district][abbreviated_name]
     
     return abbreviated_name
 
