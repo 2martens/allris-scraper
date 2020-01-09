@@ -91,6 +91,7 @@ def login(driver: webdriver.WebDriver, username: str, password: str) -> None:
 
 def get_meetings(driver: webdriver.WebDriver) -> List[meeting.Meeting]:
     elements = driver.find_elements_by_class_name("zl12")
+    elements.extend(driver.find_elements_by_class_name("zl11"))
     meetings = list()
     for element in elements:
         tds = element.find_elements_by_tag_name("td")
