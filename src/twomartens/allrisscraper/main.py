@@ -151,7 +151,7 @@ def get_abbreviated_committee_name(name: str) -> str:
             abbreviated_name = f"A{abbreviated_name}"
     elif start_regional_committee in name:
         second_part = name[len(start_committee):]
-        second_split = second_part.split(sep=",")
+        second_split = second_part.split(sep="/")
         abbreviated_name = f"Ra{get_abbreviation(second_split)}"
     
     return abbreviated_name
