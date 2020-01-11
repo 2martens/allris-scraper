@@ -32,7 +32,6 @@ from twomartens.allrisscraper import definitions
 
 ALLRIS_LOGIN: str = "https://2martens.de/allris-eimsbüttel"
 ALLRIS_OPEN: str = "https://2martens.de/bezirk-eimsbüttel"
-user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3112.50 Safari/537.36'
 _CONFIG_PROPS = {
     "Default": {
         "district": "Eimsbüttel",
@@ -71,13 +70,12 @@ def main() -> None:
     
     options = Options()
     options.headless = True
-    options.add_argument(f"user-agent={user_agent}")
     driver = webdriver.WebDriver(options=options)
     driver.implicitly_wait(2)
     driver.get(ALLRIS_LOGIN)
     login(driver, username=username, password=password)
     driver.get("https://gateway.hamburg.de/HamburgGateway/Service/StartService/113")
-    driver.get(f"{base_url}/ri/si012.asp")
+    driver.get(f"{base_url}/si012.asp")
     meetings = get_meetings(driver)
     download_documents(driver, meetings, pdf_location, base_url, district)
     driver.close()
