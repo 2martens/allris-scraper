@@ -20,11 +20,12 @@ from datetime import date
 from datetime import time
 import os
 
-from typing import List
+from typing import List, Tuple
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.remote.webelement import WebElement
 
 from twomartens.allrisscraper import meeting
 from twomartens.allrisscraper import definitions
@@ -113,18 +114,36 @@ def download_documents(driver: webdriver.WebDriver, meetings: List[meeting.Meeti
         driver.get(_meeting.link)
         td = driver.find_element(By.XPATH, "//table[@class='tk1']//td[@class='me1']")
         form_elements = td.find_elements_by_tag_name("form")
-        agenda_item = form_elements[0]
-        agenda_link = f"{base_link}?DOLFDNR={agenda_item.find_element_by_name('DOLFDNR').get_property('value')}&options=64"
-        total_item = form_elements[1]
-        total_link = f"{base_link}?DOLFDNR={total_item.find_element_by_name('DOLFDNR').get_property('value')}&options=64"
-        invitation_item = form_elements[2]
-        invitation_link = f"{base_link}?DOLFDNR={invitation_item.find_element_by_name('DOLFDNR').get_property('value')}&options=64"
+        agenda_link, total_link, invitation_link = get_links(form_elements, base_link)
         driver.get(agenda_link)
         save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Tagesordnung.pdf")
         driver.get(total_link)
         save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Mappe.pdf")
         driver.get(invitation_link)
         save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Einladung.pdf")
+
+
+def get_links(form_elements: List[WebElement], base_link: str) -> Tuple[str, str, str]:
+    agenda_name = "Tagesordnung"
+    updated_agenda_name = "Aktuelle TO"
+    total_name = "Alle Dokumente zur Sitzung im Paket"
+    total_short_name = "Mappe"
+    invitation_name = "Einladung"
+    
+    links = {}
+    for element in form_elements:
+        name = element.find_element_by_class_name("il2_p").get_property("value")
+        link = f"{base_link}?DOLFDNR={element.find_element_by_name('DOLFDNR').get_property('value')}&options=64"
+        if name == agenda_name:
+            links[agenda_name] = link
+        if name == updated_agenda_name:
+            links[agenda_name] = link
+        if name == total_name:
+            links[total_short_name] = link
+        if name == invitation_name:
+            links[invitation_name] = link
+    
+    return links[agenda_name], links[total_short_name], links[invitation_name]
 
 
 def get_formatted_filename(pdf_location: str, meeting_obj: meeting.Meeting, district: str) -> str:
