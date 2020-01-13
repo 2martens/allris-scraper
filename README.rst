@@ -1,9 +1,12 @@
 ALLRIS Scraper
 ==============
 
-.. image:: https://img.shields.io/pypi/l/twomartens.allrisscraper :alt: Apache Licence 2.0
-.. image:: https://img.shields.io/pypi/pyversions/twomartens.allrisscraper :alt: Supports Python 3.7 and 3.8
-.. image:: https://img.shields.io/pypi/v/twomartens.allrisscraper :alt: version 0.3.3
+.. image:: https://img.shields.io/pypi/l/twomartens.allrisscraper.svg
+    :alt: Apache License 2.0
+.. image:: https://img.shields.io/pypi/pyversions/twomartens.allrisscraper.svg
+    :alt: Python 3.7 and 3.8
+.. image:: https://img.shields.io/pypi/v/twomartens.allrisscraper.svg
+    :alt: version 0.3.4
 
 This scraper requires your username and password and performs the following tasks for you:
 
@@ -13,7 +16,7 @@ This scraper requires your username and password and performs the following task
   - Only considers meetings where you already have been invited formally through ALLRIS.
 
 **IMPORTANT:**
-All districts are supported but official committe abbreviations will only work for Eimsbüttel as of now.
+All districts are supported but official committee abbreviations will only work for Eimsbüttel as of now.
 
 Requirements
 ------------

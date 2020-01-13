@@ -3,6 +3,9 @@ Changelog
 
 This changelog contains a list of versions with their respective high-level changes.
 
+v0.3.4:
+    - fixed some typos
+    - fixed not working badges
 v0.3.3:
     - added changelog
     - converted README to reStructuredText
