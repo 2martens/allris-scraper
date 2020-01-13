@@ -3,6 +3,9 @@ Changelog
 
 This changelog contains a list of versions with their respective high-level changes.
 
+v0.3.3:
+    - added changelog
+    - converted README to reStructuredText
 v0.3.2:
     document links now work if more than three documents are available
 v0.3.1:

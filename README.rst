@@ -3,7 +3,7 @@ ALLRIS Scraper
 
 .. image:: https://img.shields.io/pypi/l/twomartens.allrisscraper :alt: Apache Licence 2.0
 .. image:: https://img.shields.io/pypi/pyversions/twomartens.allrisscraper :alt: Supports Python 3.7 and 3.8
-.. image:: https://img.shields.io/pypi/v/twomartens.allrisscraper :alt: version 0.3.2
+.. image:: https://img.shields.io/pypi/v/twomartens.allrisscraper :alt: version 0.3.3
 
 This scraper requires your username and password and performs the following tasks for you:
 
