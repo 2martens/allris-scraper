@@ -19,14 +19,14 @@
 from setuptools import find_packages
 from setuptools import setup
 
-with open("README.md", "rb") as f:
+with open("README.rst", "rb") as f:
     long_desc = f.read().decode()
 
 setup(
     name="twomartens.allrisscraper",
     description="Scraper for ALLRIS",
     long_description=long_desc,
-    long_description_content_type="text/markdown; charset=UTF-8",
+    long_description_content_type="text/x-rst; charset=UTF-8",
     author="Jim Martens",
     author_email="github@2martens.de",
     url="https://git.2martens.de/2martens/allris-scraper",
