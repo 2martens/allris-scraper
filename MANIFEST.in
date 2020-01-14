@@ -1,3 +1,13 @@
-include README.rst
-include LICENSE
-include CHANGELOG.rst
+include LICENSE *.rst *.toml *.yml *.yaml
+
+# Tests
+include tox.ini .coveragerc conftest.py
+recursive-include tests *.py
+
+# Documentation
+include docs/Makefile docs/make.bat
+recursive-include docs *.png
+recursive-include docs *.svg
+recursive-include docs *.py
+recursive-include docs *.rst
+prune docs/_build
