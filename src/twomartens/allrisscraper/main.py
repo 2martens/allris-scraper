@@ -118,12 +118,16 @@ def download_documents(driver: webdriver.Firefox, meetings: List[meeting.Meeting
         td = driver.find_element(By.XPATH, "//table[@class='tk1']//td[@class='me1']")
         form_elements = td.find_elements_by_tag_name("form")
         agenda_link, total_link, invitation_link = get_links(form_elements, base_link)
-        driver.get(agenda_link)
-        save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Tagesordnung.pdf")
-        driver.get(total_link)
-        save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Mappe.pdf")
-        driver.get(invitation_link)
-        save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Einladung.pdf")
+        if len(agenda_link) > 0:
+            driver.get(agenda_link)
+            save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Tagesordnung.pdf")
+        if len(total_link) > 0:
+            driver.get(total_link)
+            save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Mappe.pdf")
+        if len(invitation_link) > 0:
+            driver.get(invitation_link)
+            save_pdf(driver.current_url, f"{get_formatted_filename(pdf_location, _meeting, district)}/Einladung.pdf")
+        save_file(_meeting.location, f"{get_formatted_filename(pdf_location, _meeting, district)}/ort.txt")
 
 
 def get_links(form_elements: List[WebElement], base_link: str) -> Tuple[str, str, str]:
@@ -146,6 +150,13 @@ def get_links(form_elements: List[WebElement], base_link: str) -> Tuple[str, str
         if name == invitation_name:
             links[invitation_name] = link
     
+    if agenda_name not in links:
+        links[agenda_name] = ""
+    if invitation_name not in links:
+        links[invitation_name] = ""
+    if total_short_name not in links:
+        links[total_short_name] = ""
+    
     return links[agenda_name], links[total_short_name], links[invitation_name]
 
 
@@ -159,6 +170,12 @@ def save_pdf(url: str, dest: str) -> None:
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     with open(dest, "wb") as file:
         file.write(data_to_write)
+
+
+def save_file(content: str, dest: str) -> None:
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    with open(dest, "w") as file:
+        file.write(content)
 
 
 def get_day(date_str: str) -> date:

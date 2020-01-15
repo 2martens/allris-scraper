@@ -6,7 +6,7 @@ ALLRIS Scraper
 .. image:: https://img.shields.io/pypi/pyversions/twomartens.allrisscraper.svg
     :alt: Python 3.7 and 3.8
 .. image:: https://img.shields.io/pypi/v/twomartens.allrisscraper.svg
-    :alt: version 0.3.4
+    :alt: version 0.3.5
 
 This scraper requires your username and password and performs the following tasks for you:
 
