@@ -30,7 +30,7 @@ setup(
     author="Jim Martens",
     author_email="github@2martens.de",
     url="https://git.2martens.de/2martens/allris-scraper",
-    version="0.3.5",
+    version="0.3.6",
     namespace_packages=["twomartens"],
     packages=find_packages('src', exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     package_dir={'': 'src'},
