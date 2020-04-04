@@ -22,8 +22,9 @@ import os
 
 from typing import List, Tuple
 
+from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox import webdriver
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -38,7 +39,8 @@ _CONFIG_PROPS = {
         "district": "Eimsbüttel",
         "username": "max.mustermann@eimsbuettel.de",
         "password": "SehrSicheresPasswort",
-        "pdflocation": "/Pfad/zum/Ablegen/der/PDFs/"
+        "pdflocation": "/Pfad/zum/Ablegen/der/PDFs/",
+        "firefoxBinary": "/Pfad/zur/firefox.exe",
     }
 }
 
@@ -67,11 +69,12 @@ def main() -> None:
     username = config["Default"]["username"]
     password = config["Default"]["password"]
     pdf_location = config["Default"]["pdflocation"]
+    firefox_binary = config["Default"]["firefoxBinary"]
     base_url = definitions.BASE_LINKS[district]
     
     options = Options()
-    options.headless = True
-    driver = webdriver.WebDriver(options=options)
+    binary = FirefoxBinary(firefox_binary)
+    driver = webdriver.Firefox(firefox_binary=binary, options=options)
     driver.implicitly_wait(2)
     driver.get(ALLRIS_LOGIN)
     login(driver, username=username, password=password)
@@ -82,7 +85,7 @@ def main() -> None:
     driver.close()
     
 
-def login(driver: webdriver.WebDriver, username: str, password: str) -> None:
+def login(driver: webdriver.Firefox, username: str, password: str) -> None:
     login_field = driver.find_element_by_id("LoginName")
     login_field.send_keys(username)
     password_field = driver.find_element_by_id("Password")
@@ -91,7 +94,7 @@ def login(driver: webdriver.WebDriver, username: str, password: str) -> None:
     button.click()
     
 
-def get_meetings(driver: webdriver.WebDriver) -> List[meeting.Meeting]:
+def get_meetings(driver: webdriver.Firefox) -> List[meeting.Meeting]:
     elements = driver.find_elements_by_class_name("zl12")
     elements.extend(driver.find_elements_by_class_name("zl11"))
     meetings = list()
@@ -107,7 +110,7 @@ def get_meetings(driver: webdriver.WebDriver) -> List[meeting.Meeting]:
     return meetings
     
 
-def download_documents(driver: webdriver.WebDriver, meetings: List[meeting.Meeting],
+def download_documents(driver: webdriver.Firefox, meetings: List[meeting.Meeting],
                        pdf_location: str, base_url: str, district: str) -> None:
     base_link = f"{base_url}/do027.asp"
     for _meeting in meetings:
