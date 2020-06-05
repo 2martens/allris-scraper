@@ -73,6 +73,7 @@ def main() -> None:
     base_url = definitions.BASE_LINKS[district]
     
     options = Options()
+    options.headless = True
     binary = FirefoxBinary(firefox_binary)
     driver = webdriver.Firefox(firefox_binary=binary, options=options)
     driver.implicitly_wait(2)
