@@ -78,7 +78,7 @@ def main() -> None:
     driver.implicitly_wait(2)
     driver.get(ALLRIS_LOGIN)
     login(driver, username=username, password=password)
-    driver.get("https://gateway.hamburg.de/HamburgGateway/Service/StartService/113")
+    driver.get("https://serviceportal.hamburg.de/HamburgGateway/Service/StartService/ALLMAnd")
     driver.get(f"{base_url}/si012.asp")
     meetings = get_meetings(driver)
     download_documents(driver, meetings, pdf_location, base_url, district)
@@ -86,11 +86,11 @@ def main() -> None:
     
 
 def login(driver: webdriver.Firefox, username: str, password: str) -> None:
-    login_field = driver.find_element_by_id("LoginName")
+    login_field = driver.find_element_by_id("Username")
     login_field.send_keys(username)
     password_field = driver.find_element_by_id("Password")
     password_field.send_keys(password)
-    button = driver.find_element_by_id("buttonLogin")
+    button = driver.find_element_by_class_name("btn-primary")
     button.click()
     
 
