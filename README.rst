@@ -49,6 +49,8 @@ Configuration
     password = VerySecurePassword
     ; location for storage of PDFs (trailing slash is IMPORTANT)
     pdflocation = /path/to/storage/of/PDFs/
+    ; location of the firefox binary
+    firefoxBinary = /Pfad/zur/firefox.exe
 
 Usage after initial setup
 -------------------------
