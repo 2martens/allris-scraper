@@ -3,6 +3,8 @@ Changelog
 
 This changelog contains a list of versions with their respective high-level changes.
 
+v0.3.7:
+    - changed login link
 v0.3.6:
     - specified firefox binary to prevent start up issues
 v0.3.5:
