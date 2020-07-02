@@ -159,7 +159,7 @@ def get_motion(driver: webdriver.Firefox, link: str, reference: str) -> agenda.M
     
     text_divs = driver.find_elements(By.XPATH, "//table[@class='risdeco']//tr[2]//td[2]//div")
     context_div = text_divs[0]
-    context_ps = context_div.find_elements_by_tag_name("p")[1:-1]
+    context_ps = context_div.find_elements(By.XPATH, "p")[1:-1]
     context = ""
     for p in context_ps:
         if len(context) > 0:
@@ -167,7 +167,7 @@ def get_motion(driver: webdriver.Firefox, link: str, reference: str) -> agenda.M
         context += str(p.text).strip()
     
     petition_div = text_divs[1]
-    petition_ps = petition_div.find_elements_by_tag_name("p")[1:-1]
+    petition_ps = petition_div.find_elements(By.XPATH, "p")[1:-1]
     petition = ""
     for p in petition_ps:
         if len(petition) > 0:
