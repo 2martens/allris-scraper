@@ -13,18 +13,20 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-import datetime
-from dataclasses import dataclass
-from typing import Optional
 
-from twomartens.allrisscraper.agenda import Agenda
+from dataclasses import dataclass
+from typing import List, Dict
 
 
 @dataclass
-class Meeting:
-    name: str
-    date: datetime.date
-    time: datetime.time
-    link: str
-    location: str
-    agenda: Optional[Agenda]
+class Motion:
+    id: str
+    title: str
+    text: str
+
+
+@dataclass
+class Agenda:
+    noticesOfChair: Dict[str, Motion]
+    noticesOfAdministration: Dict[str, Motion]
+    motions: Dict[str, Motion]

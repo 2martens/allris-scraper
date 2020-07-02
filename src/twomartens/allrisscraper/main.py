@@ -76,12 +76,14 @@ def main() -> None:
     options.headless = True
     binary = FirefoxBinary(firefox_binary)
     driver = webdriver.Firefox(firefox_binary=binary, options=options)
+    driver.delete_all_cookies()
     driver.implicitly_wait(2)
     driver.get(ALLRIS_LOGIN)
     login(driver, username=username, password=password)
     driver.get("https://serviceportal.hamburg.de/HamburgGateway/Service/StartService/ALLMAnd")
     driver.get(f"{base_url}/si012.asp")
     meetings = get_meetings(driver)
+    fill_agendas_committees(driver, meetings)
     download_documents(driver, meetings, pdf_location, base_url, district)
     driver.close()
     
@@ -106,9 +108,24 @@ def get_meetings(driver: webdriver.Firefox) -> List[meeting.Meeting]:
         agenda_link = tds[4].find_element_by_tag_name("a").get_property("href")
         name = tds[4].find_element_by_tag_name("a").text
         location = tds[5].text
-        meetings.append(meeting.Meeting(name, date_obj, time_obj, agenda_link, location))
+        meetings.append(meeting.Meeting(name, date_obj, time_obj, agenda_link, location, None))
     
     return meetings
+
+
+def fill_agendas_committees(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) -> None:
+    notices_of_chair = "Mitteilungen der/des Vorsitzenden"
+    notices_of_administration = "Mitteilungen der Verwaltung"
+    motions = "Anträge / Vorlagen der Verwaltung"
+    for _meeting in meetings:
+        driver.get(_meeting.link)
+        td = driver.find_element(By.XPATH, "//td[text()='" + notices_of_chair + "']")
+        topChair = td.find_element(By.XPATH, '..').find_element(By.CSS_SELECTOR, 'td:first-child').find_element_by_tag_name("a").text
+        td = driver.find_element(By.XPATH, "//td[text()='" + notices_of_administration + "']")
+        topAdmin = td.find_element(By.XPATH, '..').find_element(By.CSS_SELECTOR, 'td:first-child').find_element_by_tag_name("a").text
+        td = driver.find_element(By.XPATH, "//td[text()='" + motions + "']")
+        topMotions = td.find_element(By.XPATH, '..').find_element(By.CSS_SELECTOR, 'td:first-child').find_element_by_tag_name("a").text
+        pass
     
 
 def download_documents(driver: webdriver.Firefox, meetings: List[meeting.Meeting],
