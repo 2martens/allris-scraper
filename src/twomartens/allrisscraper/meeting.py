@@ -25,6 +25,8 @@ class Meeting:
     name: str
     date: datetime.date
     time: datetime.time
+    end_time: Optional[datetime.time]
     link: str
     location: str
+    address: Optional[str]
     agenda: Optional[Agenda]

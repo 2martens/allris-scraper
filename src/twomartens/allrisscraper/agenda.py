@@ -15,18 +15,36 @@
 #   limitations under the License.
 
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List
+
+
+@dataclass
+class Consultation:
+    authoritative: bool
+    role: str
 
 
 @dataclass
 class Motion:
-    id: str
-    title: str
-    text: str
+    name: str
+    reference: str
+    type: str
+    underDirectionOf: str
+    context: str
+    petition: str
 
 
 @dataclass
+class AgendaItem:
+    number: str
+    order: int
+    name: str
+    public: bool
+    link: str
+    motion_link: str
+    motion_reference: str
+    
+
+@dataclass
 class Agenda:
-    noticesOfChair: Dict[str, Motion]
-    noticesOfAdministration: Dict[str, Motion]
-    motions: Dict[str, Motion]
+    agendaItems: List[AgendaItem]

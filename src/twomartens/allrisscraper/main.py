@@ -28,40 +28,16 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.remote.webelement import WebElement
 
-from twomartens.allrisscraper import meeting
+from twomartens.allrisscraper import config as config_module
 from twomartens.allrisscraper import definitions
-
-
-ALLRIS_LOGIN: str = "https://2martens.de/allris-eimsbüttel"
-ALLRIS_OPEN: str = "https://2martens.de/bezirk-eimsbüttel"
-_CONFIG_PROPS = {
-    "Default": {
-        "district": "Eimsbüttel",
-        "username": "max.mustermann@eimsbuettel.de",
-        "password": "SehrSicheresPasswort",
-        "pdflocation": "/Pfad/zum/Ablegen/der/PDFs/",
-        "firefoxBinary": "/Pfad/zur/firefox.exe",
-    }
-}
+from twomartens.allrisscraper import meeting
+from twomartens.allrisscraper.definitions import ALLRIS_LOGIN
 
 
 def main() -> None:
     config_file = f"{os.getcwd()}/tm-allris-scraper-config.ini"
-    try:
-        with open(config_file, "r"):
-            # if we reach this branch then the file exists and everything is fine
-            pass
-    except FileNotFoundError:
-        with open(config_file, "w") as file:
-            parser = configparser.ConfigParser()
-            for section in _CONFIG_PROPS:
-                parser[section] = {}
-                for option in _CONFIG_PROPS[section]:
-                    default = _CONFIG_PROPS[section][option]
-                    parser[section][option] = default
-
-            parser.write(file)
-            return
+    if not config_module.initialize_config(config_file):
+        return
             
     config = configparser.ConfigParser()
     config.read(config_file)
@@ -83,7 +59,6 @@ def main() -> None:
     driver.get("https://serviceportal.hamburg.de/HamburgGateway/Service/StartService/ALLMAnd")
     driver.get(f"{base_url}/si012.asp")
     meetings = get_meetings(driver)
-    fill_agendas_committees(driver, meetings)
     download_documents(driver, meetings, pdf_location, base_url, district)
     driver.close()
     
@@ -108,25 +83,13 @@ def get_meetings(driver: webdriver.Firefox) -> List[meeting.Meeting]:
         agenda_link = tds[4].find_element_by_tag_name("a").get_property("href")
         name = tds[4].find_element_by_tag_name("a").text
         location = tds[5].text
-        meetings.append(meeting.Meeting(name, date_obj, time_obj, agenda_link, location, None))
+        meetings.append(meeting.Meeting(name=name, date=date_obj,
+                                        time=time_obj, end_time=None,
+                                        link=agenda_link, location=location,
+                                        agenda=None, address=None))
     
     return meetings
 
-
-def fill_agendas_committees(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) -> None:
-    notices_of_chair = "Mitteilungen der/des Vorsitzenden"
-    notices_of_administration = "Mitteilungen der Verwaltung"
-    motions = "Anträge / Vorlagen der Verwaltung"
-    for _meeting in meetings:
-        driver.get(_meeting.link)
-        td = driver.find_element(By.XPATH, "//td[text()='" + notices_of_chair + "']")
-        topChair = td.find_element(By.XPATH, '..').find_element(By.CSS_SELECTOR, 'td:first-child').find_element_by_tag_name("a").text
-        td = driver.find_element(By.XPATH, "//td[text()='" + notices_of_administration + "']")
-        topAdmin = td.find_element(By.XPATH, '..').find_element(By.CSS_SELECTOR, 'td:first-child').find_element_by_tag_name("a").text
-        td = driver.find_element(By.XPATH, "//td[text()='" + motions + "']")
-        topMotions = td.find_element(By.XPATH, '..').find_element(By.CSS_SELECTOR, 'td:first-child').find_element_by_tag_name("a").text
-        pass
-    
 
 def download_documents(driver: webdriver.Firefox, meetings: List[meeting.Meeting],
                        pdf_location: str, base_url: str, district: str) -> None:
