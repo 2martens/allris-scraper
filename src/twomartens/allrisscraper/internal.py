@@ -13,7 +13,7 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
-
+import argparse
 import configparser
 import os
 from datetime import date
@@ -33,7 +33,7 @@ from twomartens.allrisscraper import meeting
 from twomartens.allrisscraper.definitions import ALLRIS_LOGIN
 
 
-def main() -> None:
+def main(args: argparse.Namespace) -> None:
     config_file = f"{os.getcwd()}/tm-allris-scraper-config.ini"
     if not config_module.initialize_config(config_file):
         return

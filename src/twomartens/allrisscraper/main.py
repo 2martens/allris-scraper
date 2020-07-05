@@ -6,10 +6,16 @@ from twomartens.allrisscraper import public
 
 def main():
     parser = argparse.ArgumentParser(description="Scrape the ALLRis website")
-    parser.add_argument("mode", choices=["oparl", "internal"], help="which mode should be used")
-    args = parser.parse_args()
+    subparsers = parser.add_subparsers(help="sub-command help", required=True)
+    oparl_parser = subparsers.add_parser("oparl", help="scrapes the public website")
+    oparl_parser.add_argument("--include-organizations", action="store_true", dest="include_organizations")
+    oparl_parser.set_defaults(function=public.main)
+    internal_parser = subparsers.add_parser("internal", help="scrapes the internal website")
+    internal_parser.set_defaults(function=internal.main)
     
-    if args.mode == "oparl":
-        public.main()
-    else:
-        internal.main()
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()
