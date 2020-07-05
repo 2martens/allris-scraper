@@ -15,8 +15,6 @@ from twomartens.allrisscraper import meeting
 from twomartens.allrisscraper import organization
 from twomartens.allrisscraper import person
 
-XPATH_2ND_TD = "td[2]"
-
 
 def main(args: argparse.Namespace):
     config_file = f"{os.getcwd()}/tm-allris-scraper-config.ini"
@@ -35,27 +33,26 @@ def main(args: argparse.Namespace):
     binary = FirefoxBinary(firefox_binary)
     driver = webdriver.Firefox(firefox_binary=binary, options=options)
     driver.implicitly_wait(2)
-    meetings = meeting.get_meetings(driver, base_url)
-    agenda.process_agendas(driver, meetings)
-    motions = agenda.get_motions(driver, meetings)
-    organizations = []
-    persons = []
+    os.makedirs(json_path, exist_ok=True)
+    if args.include_meetings:
+        meetings = meeting.get_meetings(driver, base_url)
+        agenda.process_agendas(driver, meetings)
+        motions = agenda.get_motions(driver, meetings)
+        with open(json_path + "meetings.json", "w") as file:
+            json.dump(meetings, file,
+                      cls=custom_json.EnhancedJSONEncoder)
+        with open(json_path + "motions.json", "w") as file:
+            json.dump(motions, file,
+                      cls=custom_json.EnhancedJSONEncoder)
+    
     if args.include_organizations:
         organizations = organization.get_organizations(driver, base_url)
         persons = person.get_persons(driver, organizations)
-    driver.close()
-    
-    os.makedirs(json_path, exist_ok=True)
-    with open(json_path + "meetings.json", "w") as file:
-        json.dump(meetings, file,
-                  cls=custom_json.EnhancedJSONEncoder)
-    with open(json_path + "motions.json", "w") as file:
-        json.dump(motions, file,
-                  cls=custom_json.EnhancedJSONEncoder)
-    if args.include_organizations:
         with open(json_path + "organizations.json", "w") as file:
             json.dump(organizations, file,
                       cls=custom_json.EnhancedJSONEncoder)
         with open(json_path + "persons.json", "w") as file:
             json.dump(persons, file,
                       cls=custom_json.EnhancedJSONEncoder)
+    
+    driver.close()

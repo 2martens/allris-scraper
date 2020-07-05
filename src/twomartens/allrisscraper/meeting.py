@@ -23,7 +23,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.webelement import FirefoxWebElement
 
-from twomartens.allrisscraper.agenda import Agenda
+from twomartens.allrisscraper import data_types
 from twomartens.allrisscraper.definitions import MONTHS
 
 
@@ -36,7 +36,7 @@ class Meeting:
     link: str
     location: str
     address: Optional[str]
-    agenda: Optional[Agenda]
+    agenda: Optional[data_types.Agenda]
 
 
 def get_meetings(driver: webdriver, base_url: str):

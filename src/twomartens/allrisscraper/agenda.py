@@ -14,7 +14,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from dataclasses import dataclass
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -24,46 +23,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 from twomartens.allrisscraper import meeting
-from twomartens.allrisscraper.public import XPATH_2ND_TD
+from twomartens.allrisscraper import data_types as types
 
-
-@dataclass
-class Consultation:
-    authoritative: bool
-    agenda_item: str
-    meeting: str
-    organization: List[str]
-    role: str
-    result: str
-
-
-@dataclass
-class Motion:
-    consultations: List[Consultation]
-    context: str
-    file: str
-    name: str
-    reference: str
-    petition: str
-    type: str
-    under_direction_of: str
-
-
-@dataclass
-class AgendaItem:
-    number: str
-    order: int
-    name: str
-    public: bool
-    link: str
-    motion_link: str
-    motion_reference: str
-    resolution_text: str
-
-
-@dataclass
-class Agenda:
-    agenda_items: List[AgendaItem]
+XPATH_2ND_TD = "td[2]"
 
 
 def process_agendas(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) -> None:
@@ -88,10 +50,10 @@ def process_agenda(driver: webdriver.Firefox, meeting_obj: meeting.Meeting) -> N
     agenda_items = list()
     for index, agenda_item_tr in enumerate(agenda_item_trs):
         agenda_items.append(process_agenda_item(index, agenda_item_tr))
-    meeting_obj.agenda = Agenda(agenda_items)
+    meeting_obj.agenda = types.Agenda(agenda_items)
 
 
-def process_agenda_item(index: int, item: WebElement) -> AgendaItem:
+def process_agenda_item(index: int, item: WebElement) -> types.AgendaItem:
     tds = item.find_elements_by_xpath("td")
     item_link = str(tds[0].find_element_by_tag_name("a").get_property("href")).strip()
     number = str(tds[0].find_element_by_tag_name("a").text).strip()
@@ -105,14 +67,14 @@ def process_agenda_item(index: int, item: WebElement) -> AgendaItem:
         motion_link = str(tds[5].find_element_by_tag_name("a").get_property("href")).strip()
         motion_reference = str(tds[5].find_element_by_tag_name("a").text).strip()
     
-    return AgendaItem(number=number, order=index, name=name,
-                      public=public, link=item_link,
-                      motion_link=motion_link, motion_reference=motion_reference,
-                      resolution_text="")
+    return types.AgendaItem(number=number, order=index, name=name,
+                            public=public, link=item_link,
+                            motion_link=motion_link, motion_reference=motion_reference,
+                            resolution_text="")
 
 
-def get_motions(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) -> Dict[str, Motion]:
-    motions: Dict[str, Motion] = dict()
+def get_motions(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) -> Dict[str, types.Motion]:
+    motions: Dict[str, types.Motion] = dict()
     for _meeting in meetings:
         agenda_items = _meeting.agenda.agenda_items
         for agenda_item in agenda_items:
@@ -124,7 +86,7 @@ def get_motions(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) -> D
     return motions
 
 
-def get_motion(driver: webdriver.Firefox, agenda_item_link: str, link: str, reference: str) -> Motion:
+def get_motion(driver: webdriver.Firefox, agenda_item_link: str, link: str, reference: str) -> types.Motion:
     driver.get(link)
     meta_table = driver.find_element_by_xpath("//table[@class='risdeco']//tr[2]//td[2]//table//tr//td[1]//table")
     meta_trs = meta_table.find_elements_by_xpath("./tbody//tr")
@@ -140,12 +102,18 @@ def get_motion(driver: webdriver.Firefox, agenda_item_link: str, link: str, refe
         is_organization_header = tds[1].get_attribute("class") == "text1"
         if is_organization_header:
             current_organization = str(tds[1].text).strip()
-            current_role = str(tds[2].text).strip()
+            if len(tds) >= 3:
+                current_role = str(tds[2].text).strip()
+            else:
+                current_role = None
         else:
             authoritative = str(tds[0].get_property("title")).strip() == "Erledigt" \
-                            and str(tds[4].text).strip() in ["beschlossen", "zur Kenntnis genommen"]
+                            and str(tds[4].text).strip() in ["beschlossen", "zur Kenntnis genommen", "abgelehnt"]
+            link_exists = len(tds[3].find_elements_by_xpath("a")) > 0
+            if not link_exists:
+                continue
             meeting_link = str(tds[3].find_element_by_xpath("a").get_property("href")).strip()
-            consultations.append(Consultation(
+            consultations.append(types.Consultation(
                     authoritative=authoritative, meeting=meeting_link,
                     organization=[current_organization], role=current_role,
                     agenda_item=agenda_item_link, result=str(tds[2].text).strip()
@@ -181,7 +149,7 @@ def get_motion(driver: webdriver.Firefox, agenda_item_link: str, link: str, refe
         petition += str(p.text).strip()
     petition.rstrip()
     
-    return Motion(name=name, reference=reference,
-                  type=motion_type, under_direction_of=under_direction_of,
-                  context=context, petition=petition, consultations=consultations,
-                  file=file_link)
+    return types.Motion(name=name, reference=reference,
+                        type=motion_type, under_direction_of=under_direction_of,
+                        context=context, petition=petition, consultations=consultations,
+                        file=file_link)
