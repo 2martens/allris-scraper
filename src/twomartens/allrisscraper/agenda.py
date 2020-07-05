@@ -21,20 +21,23 @@ from typing import List
 @dataclass
 class Consultation:
     authoritative: bool
+    agenda_item: str
     meeting: str
     organization: List[str]
     role: str
+    result: str
 
 
 @dataclass
 class Motion:
+    consultations: List[Consultation]
+    context: str
+    file: str
     name: str
     reference: str
+    petition: str
     type: str
     under_direction_of: str
-    context: str
-    petition: str
-    consultations: List[Consultation]
 
 
 @dataclass
@@ -46,6 +49,7 @@ class AgendaItem:
     link: str
     motion_link: str
     motion_reference: str
+    resolution_text: str
     
 
 @dataclass
