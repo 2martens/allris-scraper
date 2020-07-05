@@ -96,7 +96,7 @@ def download_documents(driver: webdriver.Firefox, meetings: List[meeting.Meeting
     base_link = f"{base_url}/do027.asp"
     for _meeting in meetings:
         driver.get(_meeting.link)
-        td = driver.find_element(By.XPATH, "//table[@class='tk1']//td[@class='me1']")
+        td = driver.find_element_by_xpath("//table[@class='tk1']//td[@class='me1']")
         form_elements = td.find_elements_by_tag_name("form")
         agenda_link, total_link, invitation_link = get_links(form_elements, base_link)
         if len(agenda_link) > 0:

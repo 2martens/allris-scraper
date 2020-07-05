@@ -56,7 +56,7 @@ def main():
 
 
 def get_meetings(driver: webdriver):
-    year_month: str = str(driver.find_element(By.XPATH, "//table[@class='risdeco']//table[1]//tr").text).strip()
+    year_month: str = str(driver.find_element_by_xpath("//table[@class='risdeco']//table[1]//tr").text).strip()
     month, year = year_month.split(" ")
     calendar_lines = driver.find_elements(
             By.XPATH,
@@ -74,7 +74,7 @@ def get_meetings(driver: webdriver):
 
 
 def get_meeting(line: FirefoxWebElement, month: str, year: str, last_date: date) -> Meeting:
-    tds = line.find_elements(By.XPATH, "td")
+    tds = line.find_elements_by_xpath("td")
     date_str: str = str(tds[1].text).strip()
     if date_str:
         date_obj = date(int(year), MONTHS.get(month), int(date_str))
@@ -100,12 +100,12 @@ def process_agendas(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) 
 
 def process_agenda(driver: webdriver.Firefox, meeting_obj: meeting.Meeting) -> None:
     driver.get(meeting_obj.link)
-    td = driver.find_element(By.XPATH, "//table[@class='risdeco']//tr[2]//td[2]")
-    tables = td.find_elements(By.XPATH, "table")
+    td = driver.find_element_by_xpath("//table[@class='risdeco']//tr[2]//td[2]")
+    tables = td.find_elements_by_xpath("table")
     meta_table = tables[0]
     agenda_table = tables[1]
-    meta_trs = meta_table.find_elements(By.XPATH, "./tbody//tr//td[1]//tr")
-    meeting_obj.address = str(meta_trs[5].find_element(By.XPATH, "td[2]").text)
+    meta_trs = meta_table.find_elements_by_xpath("./tbody//tr//td[1]//tr")
+    meeting_obj.address = str(meta_trs[5].find_element_by_xpath("td[2]").text)
     
     agenda_item_trs = agenda_table.find_elements(
             By.XPATH,
@@ -119,7 +119,7 @@ def process_agenda(driver: webdriver.Firefox, meeting_obj: meeting.Meeting) -> N
 
 
 def process_agenda_item(index: int, item: WebElement) -> agenda.AgendaItem:
-    tds = item.find_elements(By.XPATH, "td")
+    tds = item.find_elements_by_xpath("td")
     item_link = str(tds[0].find_element_by_tag_name("a").get_property("href")).strip()
     number = str(tds[0].find_element_by_tag_name("a").text).strip()
     name = str(tds[3].text).strip()
@@ -151,14 +151,12 @@ def get_motions(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) -> D
 
 def get_motion(driver: webdriver.Firefox, link: str, reference: str) -> agenda.Motion:
     driver.get(link)
-    meta_table = driver.find_element(By.XPATH, "//table[@class='risdeco']//tr[2]//td[2]//table//tr//td[1]//table")
-    meta_trs = meta_table.find_elements(By.XPATH, "./tbody//tr")
-    name = str(meta_trs[0].find_element(By.XPATH, "td[2]").text).strip()
-    motion_type = str(meta_trs[1].find_element(By.XPATH, "td[4]").text).strip()
-    under_direction_of = str(meta_trs[2].find_element(By.XPATH, "td[2]").text).strip()
-    consultation_trs = meta_trs[4].find_elements(
-            By.XPATH,
-            ".//table//tr")[1:]
+    meta_table = driver.find_element_by_xpath("//table[@class='risdeco']//tr[2]//td[2]//table//tr//td[1]//table")
+    meta_trs = meta_table.find_elements_by_xpath("./tbody//tr")
+    name = str(meta_trs[0].find_element_by_xpath("td[2]").text).strip()
+    motion_type = str(meta_trs[1].find_element_by_xpath("td[4]").text).strip()
+    under_direction_of = str(meta_trs[2].find_element_by_xpath("td[2]").text).strip()
+    consultation_trs = meta_trs[4].find_elements_by_xpath(".//table//tr")[1:]
     current_organization: Optional[str] = None
     current_role: Optional[str] = None
     consultations = []
@@ -175,9 +173,9 @@ def get_motion(driver: webdriver.Firefox, link: str, reference: str) -> agenda.M
                     authoritative, meeting_link,
                     [current_organization], current_role))
     
-    text_divs = driver.find_elements(By.XPATH, "//table[@class='risdeco']//tr[2]//td[2]//div")
+    text_divs = driver.find_elements_by_xpath("//table[@class='risdeco']//tr[2]//td[2]//div")
     context_div = text_divs[0]
-    context_ps = context_div.find_elements(By.XPATH, "p")[1:-1]
+    context_ps = context_div.find_elements_by_xpath("p")[1:-1]
     context = ""
     for p in context_ps:
         if len(context) > 0:
@@ -185,7 +183,7 @@ def get_motion(driver: webdriver.Firefox, link: str, reference: str) -> agenda.M
         context += str(p.text).strip()
     
     petition_div = text_divs[1]
-    petition_ps = petition_div.find_elements(By.XPATH, "p")[1:-1]
+    petition_ps = petition_div.find_elements_by_xpath("p")[1:-1]
     petition = ""
     for p in petition_ps:
         if len(petition) > 0:
