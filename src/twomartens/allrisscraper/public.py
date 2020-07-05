@@ -22,6 +22,8 @@ from twomartens.allrisscraper import meeting
 from twomartens.allrisscraper.definitions import MONTHS
 from twomartens.allrisscraper.meeting import Meeting
 
+XPATH_2ND_TD = "td[2]"
+
 
 def main():
     config_file = f"{os.getcwd()}/tm-allris-scraper-config.ini"
@@ -105,7 +107,7 @@ def process_agenda(driver: webdriver.Firefox, meeting_obj: meeting.Meeting) -> N
     meta_table = tables[0]
     agenda_table = tables[1]
     meta_trs = meta_table.find_elements_by_xpath("./tbody//tr//td[1]//tr")
-    meeting_obj.address = str(meta_trs[5].find_element_by_xpath("td[2]").text)
+    meeting_obj.address = str(meta_trs[5].find_element_by_xpath(XPATH_2ND_TD).text)
     
     agenda_item_trs = agenda_table.find_elements(
             By.XPATH,
@@ -153,9 +155,9 @@ def get_motion(driver: webdriver.Firefox, link: str, reference: str) -> agenda.M
     driver.get(link)
     meta_table = driver.find_element_by_xpath("//table[@class='risdeco']//tr[2]//td[2]//table//tr//td[1]//table")
     meta_trs = meta_table.find_elements_by_xpath("./tbody//tr")
-    name = str(meta_trs[0].find_element_by_xpath("td[2]").text).strip()
+    name = str(meta_trs[0].find_element_by_xpath(XPATH_2ND_TD).text).strip()
     motion_type = str(meta_trs[1].find_element_by_xpath("td[4]").text).strip()
-    under_direction_of = str(meta_trs[2].find_element_by_xpath("td[2]").text).strip()
+    under_direction_of = str(meta_trs[2].find_element_by_xpath(XPATH_2ND_TD).text).strip()
     consultation_trs = meta_trs[4].find_elements_by_xpath(".//table//tr")[1:]
     current_organization: Optional[str] = None
     current_role: Optional[str] = None
