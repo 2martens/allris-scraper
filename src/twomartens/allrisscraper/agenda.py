@@ -21,6 +21,8 @@ from typing import List
 @dataclass
 class Consultation:
     authoritative: bool
+    meeting: str
+    organization: List[str]
     role: str
 
 
@@ -29,9 +31,10 @@ class Motion:
     name: str
     reference: str
     type: str
-    underDirectionOf: str
+    under_direction_of: str
     context: str
     petition: str
+    consultations: List[Consultation]
 
 
 @dataclass
@@ -47,4 +50,4 @@ class AgendaItem:
 
 @dataclass
 class Agenda:
-    agendaItems: List[AgendaItem]
+    agenda_items: List[AgendaItem]

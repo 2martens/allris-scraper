@@ -1,11 +1,11 @@
 import configparser
-import dataclasses
 import json
 import os
 from datetime import date
 from datetime import time
 from typing import Dict
 from typing import List
+from typing import Optional
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -16,8 +16,8 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from twomartens.allrisscraper import agenda
 from twomartens.allrisscraper import config as config_module
-from twomartens.allrisscraper import definitions
 from twomartens.allrisscraper import custom_json
+from twomartens.allrisscraper import definitions
 from twomartens.allrisscraper import meeting
 from twomartens.allrisscraper.definitions import MONTHS
 from twomartens.allrisscraper.meeting import Meeting
@@ -45,7 +45,7 @@ def main():
     process_agendas(driver, meetings)
     motions = get_motions(driver, meetings)
     driver.close()
-
+    
     os.makedirs(json_path, exist_ok=True)
     with open(json_path + "meetings.json", "w") as file:
         json.dump(meetings, file,
@@ -131,7 +131,7 @@ def process_agenda_item(index: int, item: WebElement) -> agenda.AgendaItem:
     if has_motion:
         motion_link = str(tds[5].find_element_by_tag_name("a").get_property("href")).strip()
         motion_reference = str(tds[5].find_element_by_tag_name("a").text).strip()
-       
+    
     return agenda.AgendaItem(number=number, order=index, name=name,
                              public=public, link=item_link,
                              motion_link=motion_link, motion_reference=motion_reference)
@@ -140,7 +140,7 @@ def process_agenda_item(index: int, item: WebElement) -> agenda.AgendaItem:
 def get_motions(driver: webdriver.Firefox, meetings: List[meeting.Meeting]) -> Dict[str, agenda.Motion]:
     motions: Dict[str, agenda.Motion] = dict()
     for _meeting in meetings:
-        agenda_items = _meeting.agenda.agendaItems
+        agenda_items = _meeting.agenda.agenda_items
         for agenda_item in agenda_items:
             if agenda_item.motion_link is None:
                 continue
@@ -156,6 +156,24 @@ def get_motion(driver: webdriver.Firefox, link: str, reference: str) -> agenda.M
     name = str(meta_trs[0].find_element(By.XPATH, "td[2]").text).strip()
     motion_type = str(meta_trs[1].find_element(By.XPATH, "td[4]").text).strip()
     under_direction_of = str(meta_trs[2].find_element(By.XPATH, "td[2]").text).strip()
+    consultation_trs = meta_trs[4].find_elements(
+            By.XPATH,
+            ".//table//tr")[1:]
+    current_organization: Optional[str] = None
+    current_role: Optional[str] = None
+    consultations = []
+    for consultation_tr in consultation_trs:
+        tds = consultation_tr.find_elements_by_xpath("td")
+        is_organization_header = tds[1].get_attribute("class") == "text1"
+        if is_organization_header:
+            current_organization = str(tds[1].text).strip()
+            current_role = str(tds[2].text).strip()
+        else:
+            authoritative = str(tds[0].get_property("title")).strip() == "Erledigt"
+            meeting_link = str(tds[3].find_element_by_xpath("a").get_property("href")).strip()
+            consultations.append(agenda.Consultation(
+                    authoritative, meeting_link,
+                    [current_organization], current_role))
     
     text_divs = driver.find_elements(By.XPATH, "//table[@class='risdeco']//tr[2]//td[2]//div")
     context_div = text_divs[0]
@@ -176,8 +194,8 @@ def get_motion(driver: webdriver.Firefox, link: str, reference: str) -> agenda.M
     petition.rstrip()
     
     return agenda.Motion(name=name, reference=reference,
-                         type=motion_type, underDirectionOf=under_direction_of,
-                         context=context, petition=petition)
+                         type=motion_type, under_direction_of=under_direction_of,
+                         context=context, petition=petition, consultations=consultations)
 
 
 if __name__ == "__main__":
