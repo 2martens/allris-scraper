@@ -68,4 +68,3 @@ In the specified location for download you will find the following structure:
 - ``YYYY-MM-DD_Abbreviation of committee or plenary session/`` (one directory for each meeting)
 - files inside the directory:
   ``Einladung.pdf`` (contains invitation), ``Mappe.pdf`` (contains all motions in one document), and ``Tagesordnung.pdf`` (agenda)
-the
