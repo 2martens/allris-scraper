@@ -77,6 +77,7 @@ CONFIG_PROPS = {
         "pdflocation":   "/Pfad/zum/Ablegen/der/PDFs/",
         "jsonLocation":  "/Pfad/zum/Ablegen/der/jsons/",
         "firefoxBinary": "/Pfad/zur/firefox.exe",
+        "geckodriver":   "/Pfad/zum/geckodriver"
     }
 }
 

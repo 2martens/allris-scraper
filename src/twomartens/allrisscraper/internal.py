@@ -36,7 +36,7 @@ def main(_) -> None:
     config_file = f"{os.getcwd()}/tm-allris-scraper-config.ini"
     if not config_module.initialize_config(config_file):
         return
-            
+        
     config = configparser.ConfigParser()
     config.read(config_file)
     district = config["Default"]["district"]
@@ -44,14 +44,15 @@ def main(_) -> None:
     password = config["Default"]["password"]
     pdf_location = config["Default"]["pdflocation"]
     firefox_binary = config["Default"]["firefoxBinary"]
+    geckodriver = config["Default"]["geckodriver"]
     base_url = definitions.BASE_LINKS[district]
     
     options = Options()
     options.headless = True
     binary = FirefoxBinary(firefox_binary)
-    driver = webdriver.Firefox(firefox_binary=binary, options=options)
+    driver = webdriver.Firefox(firefox_binary=binary, options=options, executable_path=geckodriver)
     driver.delete_all_cookies()
-    driver.implicitly_wait(2)
+    driver.implicitly_wait(5)
     driver.get(ALLRIS_LOGIN)
     login(driver, username=username, password=password)
     driver.get("https://serviceportal.hamburg.de/HamburgGateway/Service/StartService/ALLMAnd")
