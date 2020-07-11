@@ -6,9 +6,10 @@ ALLRIS Scraper
 .. image:: https://img.shields.io/pypi/pyversions/twomartens.allrisscraper.svg
     :alt: Python 3.7 and 3.8
 .. image:: https://img.shields.io/pypi/v/twomartens.allrisscraper.svg
-    :alt: version 0.3.5
+    :alt: version 0.4.0
 
-This scraper requires your username and password and performs the following tasks for you:
+This scraper offers both public and private scraping. The latter requires your username and password and performs the
+following tasks for you:
 
 - login
 - download of all agendas and motions related to upcoming meetings of committees and plenary sessions
@@ -17,6 +18,9 @@ This scraper requires your username and password and performs the following task
 
 **IMPORTANT:**
 All districts are supported but official committee abbreviations will only work for Eimsbüttel as of now.
+
+The public scraper ought to be used with care as it accesses all accessible pages of an entire month. Currently,
+June 2020 is hardcoded and it can only be used in a GUI environment.
 
 Requirements
 ------------
@@ -51,6 +55,8 @@ Configuration
     pdflocation = /path/to/storage/of/PDFs/
     ; location of the firefox binary
     firefoxBinary = /Pfad/zur/firefox.exe
+    ; location of the geckodriver binary
+    geckodriver = /Pfad/zum/geckodriver
 
 Usage after initial setup
 -------------------------
@@ -62,3 +68,4 @@ In the specified location for download you will find the following structure:
 - ``YYYY-MM-DD_Abbreviation of committee or plenary session/`` (one directory for each meeting)
 - files inside the directory:
   ``Einladung.pdf`` (contains invitation), ``Mappe.pdf`` (contains all motions in one document), and ``Tagesordnung.pdf`` (agenda)
+the

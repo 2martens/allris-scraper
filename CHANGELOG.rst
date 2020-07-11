@@ -3,6 +3,9 @@ Changelog
 
 This changelog contains a list of versions with their respective high-level changes.
 
+v0.4.0:
+    - added public scraping support
+    - added geckodriver path for internal scraping
 v0.3.7:
     - changed login link
 v0.3.6:
