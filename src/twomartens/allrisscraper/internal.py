@@ -51,6 +51,7 @@ def main(_) -> None:
     options.headless = True
     binary = FirefoxBinary(firefox_binary)
     driver = webdriver.Firefox(firefox_binary=binary, options=options, executable_path=geckodriver)
+    driver.set_window_size(1920, 1080)
     driver.delete_all_cookies()
     driver.implicitly_wait(5)
     driver.get(ALLRIS_LOGIN)
