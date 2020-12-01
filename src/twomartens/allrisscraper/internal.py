@@ -171,7 +171,11 @@ def get_abbreviated_committee_name(name: str, district: str) -> str:
     start_youth_help_committee = "Sitzung des Jugendhilfeausschusses"
     start_other_committee = "Sitzung des"
     end_other_committee = "ausschusses"
+    start_video_conf = "NICHTÖFFENTLICHE VIDEOKONFERENZ! "
     abbreviated_name = ""
+
+    if name.startswith(start_video_conf):
+        name = name.removeprefix(start_video_conf)
     if name.startswith(start_plenary):
         abbreviated_name = "BV"
     elif name.startswith(start_committee):
